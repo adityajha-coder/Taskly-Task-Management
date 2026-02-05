@@ -1,0 +1,12 @@
+{
+  "name": "Taskly",
+  "short_name": "Taskly",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "description": "Taskly - Minimal task manager with alarms",
+  "icons": [
+    { "src": "favicon-v5.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
