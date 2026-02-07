@@ -1,4 +1,3 @@
-// --- Security: XSS Prevention ---
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
     return unsafe
@@ -9,7 +8,6 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-// --- Library Safety Checks ---
 const hasMarked = typeof marked !== 'undefined';
 const hasSortable = typeof Sortable !== 'undefined';
 const hasConfetti = typeof confetti !== 'undefined';
@@ -92,7 +90,6 @@ class TaskManager {
         this.sortables.forEach(s => s.destroy());
         this.sortables = [];
 
-        // Improved drag settings for smoother experience on desktop and mobile
         columns.forEach(colId => {
             const el = document.getElementById(colId);
             if(!el) return;
@@ -103,7 +100,7 @@ class TaskManager {
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
                 dragClass: 'sortable-drag',
-                delay: 120, // shorter delay for snappier drags
+                delay: 120, 
                 delayOnTouchOnly: true,
                 swapThreshold: 0.65,
                 scroll: true,
@@ -111,7 +108,7 @@ class TaskManager {
                 scrollSpeed: 10,
                 fallbackOnBody: false,
                 forceFallback: false,
-                onStart: () => { // subtle visual cue
+                onStart: () => { 
                     if (navigator.vibrate) navigator.vibrate(5);
                 },
                 onEnd: (evt) => {
@@ -134,7 +131,6 @@ class TaskManager {
         const searchInputMobile = document.getElementById('search-input-mobile');
         const subtaskInput = document.getElementById('new-subtask-input');
 
-        // Performance: Debounce search
         const handleSearch = (e) => {
             clearTimeout(this.debounceTimer);
             this.debounceTimer = setTimeout(() => {
@@ -301,7 +297,6 @@ class TaskManager {
             try { if (window.alarmManager) alarmManager.deleteAlarmsForTask(id); } catch(e) {}
             this.saveState();
             this.render();
-            // Haptic feedback for delete
             if(navigator.vibrate) navigator.vibrate(20);
             
             this.showToastWithAction('Task deleted', 'Undo', () => {
@@ -314,7 +309,6 @@ class TaskManager {
     }
 
     exportData() {
-        // CSV Export logic
         const headers = ["Title", "Status", "Priority", "Project", "Due Date", "Description"];
         const rows = this.state.tasks.map(t => [
             `"${(t.title || '').replace(/"/g, '""')}"`,
@@ -345,11 +339,9 @@ class TaskManager {
         const modal = document.getElementById('task-modal');
         const titleEl = document.getElementById('modal-title');
         
-        // UX: Lock body scroll
         document.body.style.overflow = 'hidden';
         modal.classList.remove('hidden');
         
-        // Form Reset
         document.getElementById('task-form').reset();
         this.tempSubtasks = [];
 
@@ -367,7 +359,6 @@ class TaskManager {
                 const projSelect = document.getElementById('task-project');
                 if(projSelect) projSelect.value = task.project || this.state.projects[0];
 
-                // Handle single alarm
                 const alarmTimeEl = document.getElementById('task-alarm-time');
                 const alarmSoundEl = document.getElementById('task-alarm-sound');
                 if (alarmTimeEl && alarmSoundEl && task.alarm) {
@@ -389,7 +380,6 @@ class TaskManager {
         
         this.renderSubtaskList();
         
-        // UX: Auto-focus title on desktop only, prevent keyboard pop-up on mobile
         if(window.innerWidth > 640) {
             requestAnimationFrame(() => {
                 document.getElementById('task-title').focus();
@@ -399,7 +389,7 @@ class TaskManager {
 
     closeModal() {
         document.getElementById('task-modal').classList.add('hidden');
-        document.body.style.overflow = ''; // Restore scroll
+        document.body.style.overflow = ''; 
         this.tempSubtasks = [];
         this.tempAlarms = [];
     }
@@ -411,7 +401,7 @@ class TaskManager {
             this.tempSubtasks.push({ text, completed: false });
             input.value = '';
             this.renderSubtaskList();
-            input.focus(); // Keep focus for rapid entry
+            input.focus(); 
         }
     }
 
@@ -427,7 +417,6 @@ class TaskManager {
 
     renderSubtaskList() {
         const list = document.getElementById('subtask-list');
-        // Use escapeHtml for user content inside innerHTML
         list.innerHTML = this.tempSubtasks.map((st, index) => `
             <li class="flex items-center gap-3 bg-white/50 dark:bg-white/5 p-3 rounded-lg border border-black/5 dark:border-white/5 group hover:bg-white/80 dark:hover:bg-white/10 transition-colors">
                 <input type="checkbox" ${st.completed ? 'checked' : ''} onchange="app.toggleSubtaskInModal(${index})" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer" aria-label="Toggle subtask">
@@ -444,7 +433,6 @@ class TaskManager {
         const id = document.getElementById('task-id').value;
         const title = document.getElementById('task-title').value.trim();
 
-        // Basic Validation
         if(!title) {
             this.showToast("Title is required", "error");
             return;
@@ -456,7 +444,6 @@ class TaskManager {
         const date = document.getElementById('task-date').value;
         const project = document.getElementById('task-project').value;
 
-        // Handle single alarm
         const alarmTime = document.getElementById('task-alarm-time').value;
         const alarmSound = document.getElementById('task-alarm-sound').value;
         const alarm = (alarmTime && alarmSound) ? { time: alarmTime, sound: alarmSound } : null;
@@ -477,7 +464,6 @@ class TaskManager {
             this.addXP(5);
         }
 
-        // Persist tasks then update alarms for this task
         this.saveState();
         try {
             if (typeof alarmManager !== 'undefined') {
@@ -491,7 +477,6 @@ class TaskManager {
     render(searchTerm = '') {
         const filtered = this.getFilteredTasks(searchTerm);
         
-        // Update Counts
         const counts = {
             todo: filtered.filter(t => t.status === 'todo').length,
             inprogress: filtered.filter(t => t.status === 'in-progress').length,
@@ -503,7 +488,6 @@ class TaskManager {
         document.getElementById('count-done').innerText = counts.done;
         document.getElementById('count-total').innerText = filtered.length;
 
-        // Render Views
         if (this.state.view === 'board') {
             document.getElementById('board-view').classList.remove('hidden');
             document.getElementById('board-view').classList.add('flex');
@@ -538,7 +522,6 @@ class TaskManager {
             low: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-white/5 dark:text-slate-400 dark:border-white/5' 
         };
         
-        // Security: Escape HTML first, then parse Markdown
         const safeDesc = escapeHtml(task.description);
         const parsedDesc = (hasMarked && safeDesc) ? marked.parse(safeDesc) : safeDesc;
         const safeTitle = escapeHtml(task.title);
@@ -605,7 +588,6 @@ class TaskManager {
     }
 
     getFilteredTasks(term) {
-        // IMPORTANT: Create a shallow copy to prevent mutation of the state
         let tasks = [...this.state.tasks];
         
         if (term) tasks = tasks.filter(t => t.title.toLowerCase().includes(term));
@@ -642,14 +624,12 @@ class TaskManager {
 
     setFilter(f) {
         this.state.filter = f;
-        // Visual feedback update
         document.querySelectorAll('#sidebar button[id^="nav-"]').forEach(b => {
             b.classList.remove('bg-white/60', 'dark:bg-white/10', 'text-brand-600', 'dark:text-white');
             b.classList.add('text-slate-600', 'dark:text-slate-400');
         });
         
         if(f.startsWith('project:')) {
-            // Logic to highlight specific project button if needed
         } else {
             const btn = document.getElementById(`nav-${f}`);
             if(btn) {
@@ -659,7 +639,6 @@ class TaskManager {
         }
         
         this.render();
-        // Auto-close menu on mobile selection
         if(window.innerWidth < 640) {
             document.getElementById('sidebar').classList.add('-translate-x-full');
         }
@@ -674,7 +653,6 @@ class TaskManager {
     
     sortTasks(val) {
         this.state.sortBy = val;
-        // Pass current search value to maintain filter state
         const currentSearch = document.getElementById('search-input')?.value || '';
         this.render(currentSearch);
     }
@@ -705,7 +683,7 @@ class TaskManager {
     formatDate(d) {
         if(!d) return '';
         const date = new Date(d);
-        if(isNaN(date.getTime())) return ''; // Safety check
+        if(isNaN(date.getTime())) return ''; 
         
         const now = new Date();
         const isToday = date.toDateString() === now.toDateString();
@@ -764,7 +742,6 @@ class TaskManager {
     }
 }
 
-/* ------------------ Alarm Manager (multi-alarm, persisted, notifications + sound) ------------------ */
 class AlarmManager {
     constructor() {
         this.storageKey = 'tf_alarms';
@@ -775,40 +752,30 @@ class AlarmManager {
 
     init() {
         try { const raw = localStorage.getItem(this.storageKey); if (raw) this.alarms = JSON.parse(raw); } catch(e) { this.alarms = []; }
-        // No separate alarm panel in merged UI — keep renderList for compatibility
         this.renderList();
         this.scheduleAll();
         if ('Notification' in window && Notification.permission === 'default') {
-            // Do not spam; request permission but allow user control
             Notification.requestPermission().catch(()=>{});
         }
     }
 
     save() { try { localStorage.setItem(this.storageKey, JSON.stringify(this.alarms)); } catch(e){} }
 
-    // When alarms were previously shown in their own panel, `renderList`
-    // updated that UI. We removed the separate alarm panel and merged
-    // alarms into the task modal. Keep a lightweight renderList that
-    // refreshes the task UI (for alarm badges) for backward compatibility.
     renderList() {
         try {
             if (typeof app !== 'undefined' && app && typeof app.render === 'function') {
                 app.render();
             }
         } catch (e) {
-            // swallow errors — this is a best-effort UI sync
         }
     }
 
-    // Update alarm for a specific task (replace existing) - alarmObj contains {time,sound} or null
     updateAlarmForTask(taskId, alarmObj) {
-        // Remove existing alarm for the task
         this.alarms = this.alarms.filter(a => {
             if (a.taskId === taskId) { this.clearTimer(a.id); return false; }
             return true;
         });
 
-        // Add new alarm if provided
         if (alarmObj && alarmObj.time) {
             const now = Date.now();
             const alarm = {
@@ -853,9 +820,7 @@ class AlarmManager {
     trigger(id) {
         const alarm = this.alarms.find(a => a.id === id);
         if(!alarm) return;
-        // Play sound according to selected tone
         this.playSound(alarm.sound || 'beep');
-        // Show notification if permitted
         const taskTitle = alarm.taskId ? (app.state.tasks.find(t => t.id === alarm.taskId)?.title || '') : '';
         const notifTitle = alarm.label || taskTitle || 'Alarm';
         const notifBody = taskTitle ? `${taskTitle} — ${this.formatTime(alarm.time)}` : this.formatTime(alarm.time);
@@ -863,7 +828,6 @@ class AlarmManager {
             try { new Notification(notifTitle, { body: notifBody, tag: 'taskly-alarm' }); } catch(e){}
         }
         app.showToast(notifTitle, 'success');
-        // Keep or disable alarm (do not auto-delete) — mark disabled to avoid repeated triggers
         alarm.enabled = false;
         this.save();
         this.renderList();
@@ -924,7 +888,6 @@ class AlarmManager {
 const app = new TaskManager();
 const alarmManager = new AlarmManager();
 
-// Re-schedule all task alarms on load
 document.addEventListener('DOMContentLoaded', () => {
     try {
         if (typeof alarmManager !== 'undefined' && app && app.state.tasks) {
@@ -937,7 +900,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e) { console.warn('Alarm rescheduling:', e); }
 });
 
-// Register service worker for PWA
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
+
 }
