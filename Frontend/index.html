@@ -9,20 +9,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Taskly</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="favicon-v5.svg">
     <link rel="manifest" href="manifest.json">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
     
     <!-- LIBRARIES -->
@@ -30,7 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
-    <!-- Tailwind Configuration -->
+    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -53,21 +48,18 @@
 
     <div id="toast-container" class="fixed bottom-6 right-6 left-6 sm:left-auto z-50 flex flex-col gap-3 pointer-events-none"></div>
 
-    <!-- Header -->
     <header class="glass h-16 flex items-center justify-between px-4 sm:px-6 shrink-0 z-30 sticky top-0 border-b border-white/20 dark:border-white/5">
         <div class="flex items-center gap-3">
             <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Taskly</h1>
         </div>
 
         <div class="flex items-center gap-3 sm:gap-4">
-            <!-- Search (Desktop) -->
             <div class="relative hidden sm:block group">
                 <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
                 <input type="text" id="search-input" placeholder="Search tasks..." 
                     class="bg-white/50 dark:bg-black/20 border border-transparent dark:border-white/10 rounded-full py-1.5 pl-9 pr-4 text-xs font-medium focus:ring-1 focus:ring-brand-500 focus:bg-white dark:focus:bg-black/40 w-48 lg:w-64 transition-all placeholder-slate-400 text-slate-700 dark:text-slate-200 backdrop-blur-sm">
             </div>
 
-            <!-- View Toggles -->
             <div class="flex items-center gap-2">
                 <div class="bg-slate-100/50 dark:bg-white/5 p-1 rounded-lg flex text-xs backdrop-blur-sm">
                     <button id="view-board-btn" class="w-10 h-8 sm:w-8 sm:h-7 rounded-md bg-white dark:bg-white/10 shadow-sm transition-all text-slate-900 dark:text-white flex items-center justify-center" onclick="app.setView('board')" aria-label="Board View" title="Board View">
@@ -92,10 +84,8 @@
     </header>
 
     <div class="flex flex-1 overflow-hidden">
-        <!-- Sidebar -->
         <aside id="sidebar" class="w-64 glass border-r-0 border-r-white/20 flex flex-col -translate-x-full sm:translate-x-0 transition-transform absolute sm:relative h-full z-40 sm:z-20 shadow-xl sm:shadow-none bg-white/95 dark:bg-black/95 sm:bg-transparent">
             
-            <!-- User Profile -->
             <div class="p-6">
                 <div class="flex items-center gap-3 mb-5">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-800 to-black dark:from-white dark:to-slate-300 flex items-center justify-center text-white dark:text-black text-sm shadow-lg">
@@ -121,14 +111,12 @@
                 </div>
             </div>
 
-            <!-- Create Button (Hidden on mobile favor of FAB) -->
             <div class="px-4 mb-2 hidden sm:block">
                 <button onclick="app.openModal()" class="w-full bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-black font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-slate-900/10 dark:shadow-none transition-all flex items-center justify-center gap-2 text-xs group active:scale-95">
                     <i class="fa-solid fa-plus transition-transform group-hover:rotate-90"></i> New Task
                 </button>
             </div>
 
-            <!-- Navigation -->
             <nav class="flex-1 overflow-y-auto px-4 space-y-1 py-2">
                 <div class="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest opacity-80">Views</div>
                 
@@ -147,8 +135,6 @@
                 </div>
                 <div id="project-list" class="space-y-0.5 pb-4"></div>
             </nav>
-
-            <!-- Bottom Actions -->
             <div class="p-4 border-t border-white/20 dark:border-white/5">
                 <button onclick="app.exportData()" class="w-full flex items-center justify-center gap-2 py-3 sm:py-2.5 text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors opacity-80 hover:opacity-100 rounded-lg hover:bg-black/5 dark:hover:bg-white/5">
                     <i class="fa-solid fa-file-csv"></i> Export CSV
@@ -156,16 +142,13 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="flex-1 overflow-hidden flex flex-col relative" onclick="app.closeMobileMenuOutside(event)">
             
-            <!-- Mobile Search -->
             <div class="sm:hidden p-4 glass border-b border-white/20 dark:border-white/5">
                 <input type="text" id="search-input-mobile" placeholder="Search tasks..." 
                     class="w-full bg-white/50 dark:bg-black/20 border-none rounded-xl py-3 px-4 text-sm focus:ring-1 focus:ring-brand-500 backdrop-blur-sm">
             </div>
 
-            <!-- Toolbar -->
             <div class="px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between shrink-0">
                 <div>
                     <h2 id="page-title" class="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">All Tasks</h2>
@@ -185,12 +168,7 @@
                 </div>
             </div>
 
-            <!-- Board View -->
-            <!-- UPDATED: Flex container that fits all columns -->
             <div id="board-view" class="flex-1 px-2 sm:px-8 pb-4 sm:pb-8 flex gap-2 sm:gap-6 overflow-hidden">
-                
-                <!-- Todo Column -->
-                <!-- UPDATED: flex-1 ensures equal width sharing -->
                 <div class="flex-1 min-w-0 flex flex-col h-full">
                     <div class="flex items-center justify-between mb-2 sm:mb-4 px-1">
                         <div class="flex items-center gap-1.5 sm:gap-2">
@@ -203,7 +181,6 @@
                     <div id="col-todo" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pb-24 pr-1 scrollbar-hide"></div>
                 </div>
 
-                <!-- In Progress Column -->
                 <div class="flex-1 min-w-0 flex flex-col h-full">
                     <div class="flex items-center justify-between mb-2 sm:mb-4 px-1">
                         <div class="flex items-center gap-1.5 sm:gap-2">
@@ -215,8 +192,6 @@
                     </div>
                     <div id="col-inprogress" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pb-24 pr-1 scrollbar-hide"></div>
                 </div>
-
-                <!-- Done Column -->
                 <div class="flex-1 min-w-0 flex flex-col h-full">
                     <div class="flex items-center justify-between mb-2 sm:mb-4 px-1">
                         <div class="flex items-center gap-1.5 sm:gap-2">
@@ -228,24 +203,17 @@
                     <div id="col-done" class="flex-1 overflow-y-auto space-y-2 sm:space-y-3 pb-24 pr-1 scrollbar-hide"></div>
                 </div>
             </div>
-
-            <!-- List View -->
             <div id="list-view" class="hidden flex-1 overflow-y-auto px-6 sm:px-8 pb-8 max-w-5xl mx-auto w-full">
                 <div id="list-container" class="space-y-2 pb-24"></div>
             </div>
         </main>
-
-        <!-- Mobile Floating Action Button (FAB) -->
         <button onclick="app.openModal()" class="sm:hidden fixed bottom-6 right-6 w-14 h-14 bg-slate-900 dark:bg-white text-white dark:text-black rounded-full shadow-xl shadow-brand-500/20 flex items-center justify-center text-xl z-50 active:scale-90 transition-transform" aria-label="Create New Task">
             <i class="fa-solid fa-plus"></i>
         </button>
     </div>
 
-    <!-- Task Modal -->
     <div id="task-modal" class="fixed inset-0 bg-slate-900/30 dark:bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center sm:p-4 transition-opacity duration-200">
-        <!-- Modal Content -->
         <div class="glass dark:bg-black/90 rounded-t-3xl sm:rounded-2xl shadow-2xl w-full sm:max-w-md transform transition-all scale-100 h-auto sm:max-h-[90vh] flex flex-col border border-white/40 dark:border-white/10" onclick="event.stopPropagation()">
-            <!-- Handle bar for mobile feel -->
             <div class="sm:hidden w-full flex justify-center pt-3 pb-1">
                 <div class="w-12 h-1.5 bg-slate-300 dark:bg-white/20 rounded-full"></div>
             </div>
@@ -326,7 +294,7 @@
 
     
 
-    <!-- Application Logic -->
     <script src="script.js"></script>
 </body>
+
 </html>
