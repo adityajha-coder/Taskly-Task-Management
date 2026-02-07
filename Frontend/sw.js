@@ -18,7 +18,6 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
-  // Only handle same-origin requests
   if (url.origin !== location.origin) return;
   e.respondWith(caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
     return caches.open(CACHE_NAME).then(cache => {
@@ -27,3 +26,4 @@ self.addEventListener('fetch', (e) => {
     });
   }).catch(() => caches.match('./index.html'))));
 });
+
