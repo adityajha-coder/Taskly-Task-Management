@@ -1,0 +1,110 @@
+body { 
+    transition: background-color 0.3s, color 0.3s; 
+    background-color: #f8fafc;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.03) 0px, transparent 50%);
+    background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; 
+}
+.dark body { 
+    background-color: #050505; 
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(124, 58, 237, 0.03) 0px, transparent 50%);
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+.dark ::-webkit-scrollbar-thumb { background: #333; }
+::-webkit-scrollbar-track { background: transparent; }
+
+.sortable-ghost { opacity: 0.3; background: rgba(14, 165, 233, 0.1); border: 1px dashed #0ea5e9; transform: scale(0.98); }
+
+.sortable-chosen { box-shadow: 0 10px 30px rgba(2,6,23,0.12); transform: scale(1.01); z-index: 60; }
+.sortable-drag { opacity: 0.95; transform: rotateZ(0.001deg); }
+.glass-card { will-change: transform, opacity; touch-action: manipulation; }
+
+.prose p { margin-bottom: 0.25em; }
+.prose ul { list-style-type: disc; padding-left: 1.2em; }
+.prose a { color: #0ea5e9; text-decoration: underline; }
+
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.dark .glass {
+    background: rgba(18, 18, 18, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+.dark .glass-card {
+    background: rgba(30, 30, 30, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+input, textarea, select { font-size: 16px !important; }
+input[type="datetime-local"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.5; }
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+@media (max-width: 640px) {
+    @keyframes slideUp {
+        from { transform: translateY(100%); }
+        to { transform: translateY(0); }
+    }
+
+    #task-modal > div {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 24px 24px 0 0;
+        border-bottom: none;
+        max-height: 85vh;
+        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    button, .glass-card { 
+        cursor: default;
+        min-height: 40px;
+    }
+
+    #task-modal form > .pt-4 { display: flex; flex-direction: column-reverse; gap: 10px; }
+    #task-modal form > .pt-4 button[type="submit"] { width: 100%; }
+    #task-modal form > .pt-4 button[type="button"] { width: 100%; }
+
+    input, textarea, select { padding: 14px 12px; font-size: 16px; }
+    .glass-card { padding: 14px; }
+
+    #col-todo, #col-inprogress, #col-done, #list-view { -webkit-overflow-scrolling: touch; }
+
+    .sm\:hidden.fixed.bottom-6.right-6 { width: 62px; height: 62px; }
+}
+
+@media (max-width: 420px) {
+    #task-form { padding: 16px; }
+    .glass-card h4 { font-size: 14px; }
+}
+
+.glass-card { transition: transform 0.12s ease; }
+.glass-card button { cursor: pointer; }
