@@ -102,7 +102,6 @@ const ModalMixin = {
             taskId = Date.now().toString();
             this.state.tasks.push({ id: taskId, ...taskData, createdAt: Date.now() });
             this.addXP(5);
-            this._recordActivity();
         }
         this.saveState();
         try { if (typeof alarmManager !== 'undefined') alarmManager.updateAlarmForTask(taskId, alarm); } catch (e) { }

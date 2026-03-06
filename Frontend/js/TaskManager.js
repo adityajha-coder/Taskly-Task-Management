@@ -187,7 +187,6 @@ class TaskManager {
             if (status === 'done') {
                 this.addXP(10);
                 this.triggerConfetti();
-                this._recordActivity();
                 if (navigator.vibrate) navigator.vibrate([10, 50, 10]);
             }
             this.saveState();
@@ -260,6 +259,10 @@ class TaskManager {
     setFilter(f) {
         this.state.filter = f;
         try { localStorage.setItem('tf_filter', f); } catch (e) { }
+        if (this.state.view === 'dashboard') {
+            this.setView('board');
+            return;
+        }
         document.querySelectorAll('#sidebar button[id^="nav-"]').forEach(b => {
             b.classList.remove('bg-white/60', 'dark:bg-white/10', 'text-brand-600', 'dark:text-white');
             b.classList.add('text-slate-600', 'dark:text-slate-400');
@@ -289,6 +292,7 @@ class TaskManager {
             const titleEl = document.getElementById('page-title');
             if (titleEl) titleEl.innerText = 'Dashboard';
         } else {
+            if (v === 'board') this.initSortable();
             const titleEl = document.getElementById('page-title');
             if (titleEl) {
                 if (this.state.filter === 'all') titleEl.innerText = 'All Tasks';

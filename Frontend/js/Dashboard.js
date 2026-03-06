@@ -4,7 +4,6 @@ const DashboardMixin = {
         this._renderCompletionRing();
         this._renderPriorityChart();
         this._renderProjectChart();
-        this._renderHeatmap();
         this._renderDeadlines();
     },
 
@@ -152,86 +151,8 @@ const DashboardMixin = {
         }).join('');
     },
 
-    _renderHeatmap() {
-        const container = document.getElementById('heatmap-container');
-        if (!container) return;
-
-        const activityMap = this._getActivityData();
-        const weeks = 12;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        const start = new Date(today);
-        start.setDate(start.getDate() - (weeks * 7) + 1);
-        start.setDate(start.getDate() - start.getDay());
-
-        const dayLabels = ['', 'M', '', 'W', '', 'F', ''];
-        const isDark = this.state.darkMode;
-
-        let html = '<div class="flex gap-1">';
-        html += '<div class="flex flex-col gap-1 mr-1">';
-        dayLabels.forEach(l => {
-            html += `<div class="w-3 h-3 flex items-center justify-center text-[8px] text-slate-400 font-medium">${l}</div>`;
-        });
-        html += '</div>';
-
-        for (let w = 0; w < weeks; w++) {
-            html += '<div class="flex flex-col gap-1">';
-            for (let d = 0; d < 7; d++) {
-                const cellDate = new Date(start);
-                cellDate.setDate(cellDate.getDate() + w * 7 + d);
-                const key = cellDate.toISOString().split('T')[0];
-                const count = activityMap[key] || 0;
-                const isFuture = cellDate > today;
-
-                let colorClass;
-                if (isFuture) colorClass = isDark ? 'bg-white/[0.02]' : 'bg-slate-50';
-                else if (count === 0) colorClass = isDark ? 'bg-white/5' : 'bg-slate-100';
-                else if (count === 1) colorClass = isDark ? 'bg-emerald-900/40' : 'bg-emerald-200';
-                else if (count <= 3) colorClass = isDark ? 'bg-emerald-600/60' : 'bg-emerald-400';
-                else colorClass = isDark ? 'bg-emerald-500' : 'bg-emerald-600';
-
-                const dateStr = cellDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const tooltip = isFuture ? '' : `title="${dateStr}: ${count} task${count !== 1 ? 's' : ''}"`;
-                html += `<div class="heatmap-cell w-3 h-3 ${colorClass}" ${tooltip}></div>`;
-            }
-            html += '</div>';
-        }
-        html += '</div>';
-        container.innerHTML = html;
-    },
-
-    _getActivityData() {
-        const map = {};
-        this.state.tasks.forEach(t => {
-            if (t.createdAt) {
-                const key = new Date(t.createdAt).toISOString().split('T')[0];
-                map[key] = (map[key] || 0) + 1;
-            }
-        });
-        try {
-            const stored = localStorage.getItem('tf_activity');
-            if (stored) {
-                const parsed = JSON.parse(stored);
-                Object.entries(parsed).forEach(([k, v]) => { map[k] = (map[k] || 0) + v; });
-            }
-        } catch (e) { }
-        return map;
-    },
-
-    _recordActivity() {
-        const today = new Date().toISOString().split('T')[0];
-        try {
-            let data = {};
-            const stored = localStorage.getItem('tf_activity');
-            if (stored) data = JSON.parse(stored);
-            data[today] = (data[today] || 0) + 1;
-            localStorage.setItem('tf_activity', JSON.stringify(data));
-        } catch (e) { }
-    },
-
     _renderDeadlines() {
-        const container = document.getElementById('deadlines-list');
+        const container = document.getElementById('dash-deadlines-list');
         if (!container) return;
 
         const now = new Date();
