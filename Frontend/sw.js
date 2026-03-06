@@ -1,5 +1,5 @@
-const CACHE_NAME = 'taskly-cache-v8';
-const CDN_CACHE = 'taskly-cdn-v7';
+const CACHE_NAME = 'taskly-cache-v9';
+const CDN_CACHE = 'taskly-cdn-v8';
 
 const CORE_ASSETS = [
   './',

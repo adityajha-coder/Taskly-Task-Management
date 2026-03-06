@@ -4,6 +4,7 @@ const DashboardMixin = {
         this._renderCompletionRing();
         this._renderPriorityChart();
         this._renderProjectChart();
+        this._renderStreakWidget();
         this._renderDeadlines();
     },
 
@@ -151,32 +152,73 @@ const DashboardMixin = {
         }).join('');
     },
 
+    _renderStreakWidget() {
+        const container = document.getElementById('streak-widget');
+        if (!container) return;
+
+        const user = this.state.user;
+        const tasks = this.state.tasks;
+        const doneToday = tasks.filter(t => {
+            if (t.status !== 'done') return false;
+            const today = new Date().toDateString();
+            return t.createdAt && new Date(t.createdAt).toDateString() === today;
+        }).length;
+        const nextLevelXP = user.level * 100;
+        const xpPct = Math.min(100, Math.round((user.xp / nextLevelXP) * 100));
+
+        container.innerHTML = `
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-white text-lg shadow-lg">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-extrabold text-slate-800 dark:text-white">${user.streak || 0}</div>
+                        <div class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Day Streak</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-lg font-extrabold text-slate-800 dark:text-white">Lvl ${user.level}</div>
+                    <div class="text-[10px] text-slate-400 font-medium">${user.xp} / ${nextLevelXP} XP</div>
+                </div>
+            </div>
+            <div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-2 mb-3">
+                <div class="bar-fill h-2 rounded-full bg-gradient-to-r from-brand-500 to-purple-500" style="width: ${xpPct}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[10px]">
+                <span class="text-slate-400 font-medium">${doneToday} task${doneToday !== 1 ? 's' : ''} completed today</span>
+                <span class="text-brand-500 font-bold">${100 - xpPct}% to next level</span>
+            </div>
+        `;
+    },
+
     _renderDeadlines() {
         const container = document.getElementById('dash-deadlines-list');
         if (!container) return;
 
         const now = new Date();
-        const upcoming = this.state.tasks
-            .filter(t => t.dueDate && t.status !== 'done' && new Date(t.dueDate) > now)
+        const pending = this.state.tasks
+            .filter(t => t.dueDate && t.status !== 'done')
             .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-            .slice(0, 5);
+            .slice(0, 6);
 
-        if (upcoming.length === 0) {
+        if (pending.length === 0) {
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-8 text-center opacity-50">
                     <i class="fa-solid fa-calendar-check text-2xl text-slate-300 mb-2"></i>
-                    <p class="text-xs text-slate-400">No upcoming deadlines</p>
+                    <p class="text-xs text-slate-400">No tasks with deadlines</p>
                 </div>`;
             return;
         }
 
-        container.innerHTML = upcoming.map(t => {
+        container.innerHTML = pending.map(t => {
             const due = new Date(t.dueDate);
             const diff = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
             let urgency, urgencyColor;
-            if (diff <= 1) { urgency = 'Today'; urgencyColor = 'text-red-500 bg-red-50 dark:bg-red-900/20'; }
-            else if (diff <= 3) { urgency = `${diff}d`; urgencyColor = 'text-amber-600 bg-amber-50 dark:bg-amber-900/20'; }
-            else { urgency = `${diff}d`; urgencyColor = 'text-slate-500 bg-slate-100 dark:bg-white/5'; }
+            if (diff < 0) { urgency = 'Overdue'; urgencyColor = 'text-red-500 bg-red-50 dark:bg-red-900/20'; }
+            else if (diff === 0) { urgency = 'Today'; urgencyColor = 'text-red-500 bg-red-50 dark:bg-red-900/20'; }
+            else if (diff <= 3) { urgency = `${diff}d left`; urgencyColor = 'text-amber-600 bg-amber-50 dark:bg-amber-900/20'; }
+            else { urgency = `${diff}d left`; urgencyColor = 'text-slate-500 bg-slate-100 dark:bg-white/5'; }
 
             const priorityDot = t.priority === 'high' ? 'bg-red-500' : t.priority === 'medium' ? 'bg-amber-500' : 'bg-slate-400';
 
@@ -185,7 +227,7 @@ const DashboardMixin = {
                     <span class="w-2 h-2 rounded-full ${priorityDot} shrink-0"></span>
                     <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(t.title)}</p>
-                        <p class="text-[10px] text-slate-400">${this.formatDate(t.dueDate)}</p>
+                        <p class="text-[10px] text-slate-400">${this.formatDate(t.dueDate)}${t.project ? ' · ' + escapeHtml(t.project) : ''}</p>
                     </div>
                     <span class="text-[10px] font-bold px-2 py-1 rounded-lg ${urgencyColor} shrink-0">${urgency}</span>
                 </div>

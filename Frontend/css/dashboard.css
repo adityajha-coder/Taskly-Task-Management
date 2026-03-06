@@ -108,22 +108,9 @@
     animation: barFill 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-.heatmap-cell {
-    border-radius: 3px;
-    transition: transform 0.15s ease, opacity 0.15s ease;
-    cursor: default;
-}
 
-.heatmap-cell:hover {
-    transform: scale(1.6);
-    z-index: 10;
-    position: relative;
-    outline: 2px solid rgba(16, 185, 129, 0.4);
-    outline-offset: 1px;
-}
-
-.heatmap-cell[title] {
-    position: relative;
+.widget-card:nth-child(7) {
+    animation-delay: 0.36s;
 }
 
 .deadline-item {

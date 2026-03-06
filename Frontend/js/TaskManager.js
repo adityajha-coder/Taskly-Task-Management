@@ -75,21 +75,31 @@ class TaskManager {
             if (!el) return;
             this.sortables.push(new Sortable(el, {
                 group: 'shared',
-                animation: 150,
-                easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                animation: 200,
+                easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
                 dragClass: 'sortable-drag',
-                delay: 120,
+                delay: 50,
                 delayOnTouchOnly: true,
+                touchStartThreshold: 3,
                 swapThreshold: 0.65,
                 scroll: true,
-                scrollSensitivity: 60,
-                scrollSpeed: 10,
-                fallbackOnBody: false,
-                forceFallback: false,
-                onStart: () => { if (navigator.vibrate) navigator.vibrate(5); },
+                scrollSensitivity: 80,
+                scrollSpeed: 12,
+                bubbleScroll: true,
+                fallbackOnBody: true,
+                forceFallback: true,
+                fallbackClass: 'sortable-fallback',
+                fallbackTolerance: 3,
+                onStart: (evt) => {
+                    if (navigator.vibrate) navigator.vibrate(5);
+                    evt.item.style.opacity = '0.9';
+                    document.body.classList.add('is-dragging');
+                },
                 onEnd: (evt) => {
+                    evt.item.style.opacity = '';
+                    document.body.classList.remove('is-dragging');
                     const newStatus = evt.to.id.replace('col-', '').replace('inprogress', 'in-progress');
                     const oldStatus = evt.from.id.replace('col-', '').replace('inprogress', 'in-progress');
                     const taskId = evt.item.getAttribute('data-id');
@@ -283,9 +293,10 @@ class TaskManager {
         try { localStorage.setItem('tf_view', v); } catch (e) { }
         const active = 'w-10 h-8 sm:w-8 sm:h-7 rounded-md bg-white dark:bg-white/10 shadow-sm transition-all text-slate-900 dark:text-white flex items-center justify-center';
         const inactive = 'w-10 h-8 sm:w-8 sm:h-7 rounded-md text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center';
-        document.getElementById('view-board-btn').className = v === 'board' ? active : inactive;
-        document.getElementById('view-list-btn').className = v === 'list' ? active : inactive;
-        document.getElementById('view-dashboard-btn').className = v === 'dashboard' ? active : inactive;
+        const boardBtn = document.getElementById('view-board-btn');
+        const listBtn = document.getElementById('view-list-btn');
+        if (boardBtn) boardBtn.className = v === 'board' ? active : inactive;
+        if (listBtn) listBtn.className = v === 'list' ? active : inactive;
         this.render();
         if (v === 'dashboard') {
             this.renderDashboard();
@@ -306,6 +317,7 @@ class TaskManager {
     sortTasks(val) {
         this.state.sortBy = val;
         this.render(document.getElementById('search-input')?.value || '');
+        if (this.state.view === 'board') this.initSortable();
     }
 
     toggleTheme() {
