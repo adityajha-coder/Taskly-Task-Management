@@ -132,49 +132,6 @@ class TaskManager {
         }
     }
 
-    checkStreak() {
-        const today = new Date().toDateString();
-        const last = this.state.user.lastLogin;
-        if (last !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            if (last === yesterday.toDateString()) this.state.user.streak++;
-            else if (this.state.user.lastLogin) {
-                if (new Date(last) < yesterday) this.state.user.streak = 1;
-            } else this.state.user.streak = 1;
-            this.state.user.lastLogin = today;
-            this.saveState();
-        }
-    }
-
-    addXP(amount) {
-        this.state.user.xp += amount;
-        const nextLevel = this.state.user.level * 100;
-        if (this.state.user.xp >= nextLevel) {
-            this.state.user.level++;
-            this.state.user.xp -= nextLevel;
-            this.showToast(`Level Up! You are now Level ${this.state.user.level} 🎉`, 'success');
-            this.triggerConfetti();
-        }
-        this.saveState();
-        this.renderGamification();
-    }
-
-    renderGamification() {
-        const levelEl = document.getElementById('user-level');
-        if (levelEl) levelEl.innerText = this.state.user.level;
-        const streakEl = document.getElementById('streak-count');
-        if (streakEl) streakEl.innerText = this.state.user.streak;
-        const nextLevelXP = this.state.user.level * 100;
-        const percent = Math.min(100, Math.round((this.state.user.xp / nextLevelXP) * 100));
-        const barEl = document.getElementById('xp-bar');
-        if (barEl) barEl.style.width = `${percent}%`;
-        const currentXpEl = document.getElementById('current-xp');
-        const nextLevelXpEl = document.getElementById('next-level-xp');
-        if (currentXpEl) currentXpEl.innerText = `${this.state.user.xp} XP`;
-        if (nextLevelXpEl) nextLevelXpEl.innerText = `${nextLevelXP} XP`;
-    }
-
     getProjectColor(name) {
         if (!name) return 'bg-gray-400';
         const colors = ['bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500', 'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500', 'bg-rose-500'];
@@ -276,223 +233,6 @@ class TaskManager {
         this.showToast('Tasks exported to CSV', 'success');
     }
 
-    openModal(status = 'todo', taskId = null) {
-        const modal = document.getElementById('task-modal');
-        const titleEl = document.getElementById('modal-title');
-        document.body.style.overflow = 'hidden';
-        modal.classList.remove('hidden');
-        document.getElementById('task-form').reset();
-        this.tempSubtasks = [];
-        if (taskId) {
-            const task = this.state.tasks.find(t => t.id === taskId);
-            if (task) {
-                titleEl.innerText = 'Edit Task';
-                document.getElementById('task-id').value = task.id;
-                document.getElementById('task-title').value = task.title;
-                document.getElementById('task-desc').value = task.description;
-                document.getElementById('task-status').value = task.status;
-                document.getElementById('task-priority').value = task.priority;
-                document.getElementById('task-date').value = task.dueDate || '';
-                const projSelect = document.getElementById('task-project');
-                if (projSelect) projSelect.value = task.project || this.state.projects[0];
-                const alarmTimeEl = document.getElementById('task-alarm-time');
-                const alarmSoundEl = document.getElementById('task-alarm-sound');
-                if (alarmTimeEl && alarmSoundEl && task.alarm) {
-                    alarmTimeEl.value = task.alarm.time || '';
-                    alarmSoundEl.value = task.alarm.sound || 'beep';
-                } else {
-                    if (alarmTimeEl) alarmTimeEl.value = '';
-                    if (alarmSoundEl) alarmSoundEl.value = '';
-                }
-                this.tempSubtasks = [...(task.subtasks || [])];
-            }
-        } else {
-            titleEl.innerText = 'Create Task';
-            document.getElementById('task-id').value = '';
-            document.getElementById('task-status').value = status;
-            document.getElementById('task-priority').value = 'medium';
-        }
-        this.renderSubtaskList();
-        if (window.innerWidth > 640) {
-            requestAnimationFrame(() => { document.getElementById('task-title').focus(); });
-        }
-    }
-
-    closeModal() {
-        document.getElementById('task-modal').classList.add('hidden');
-        document.body.style.overflow = '';
-        this.tempSubtasks = [];
-        this.tempAlarms = [];
-    }
-
-    addSubtaskFromInput() {
-        const input = document.getElementById('new-subtask-input');
-        const text = input.value.trim();
-        if (text) {
-            this.tempSubtasks.push({ text, completed: false });
-            input.value = '';
-            this.renderSubtaskList();
-            input.focus();
-        }
-    }
-
-    toggleSubtaskInModal(index) {
-        this.tempSubtasks[index].completed = !this.tempSubtasks[index].completed;
-        this.renderSubtaskList();
-    }
-
-    deleteSubtaskInModal(index) {
-        this.tempSubtasks.splice(index, 1);
-        this.renderSubtaskList();
-    }
-
-    renderSubtaskList() {
-        const list = document.getElementById('subtask-list');
-        list.innerHTML = this.tempSubtasks.map((st, index) => `
-            <li class="flex items-center gap-3 bg-white/50 dark:bg-white/5 p-3 rounded-lg border border-black/5 dark:border-white/5 group hover:bg-white/80 dark:hover:bg-white/10 transition-colors">
-                <input type="checkbox" ${st.completed ? 'checked' : ''} onchange="app.toggleSubtaskInModal(${index})" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer" aria-label="Toggle subtask">
-                <span class="flex-1 text-xs font-medium ${st.completed ? 'line-through text-slate-400' : 'text-slate-700 dark:text-slate-200'}">${escapeHtml(st.text)}</span>
-                <button type="button" onclick="app.deleteSubtaskInModal(${index})" class="text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1" aria-label="Delete subtask"><i class="fa-solid fa-times"></i></button>
-            </li>
-        `).join('');
-    }
-
-    saveTask(e) {
-        e.preventDefault();
-        const id = document.getElementById('task-id').value;
-        const title = document.getElementById('task-title').value.trim();
-        if (!title) { this.showToast("Title is required", "error"); return; }
-        const desc = document.getElementById('task-desc').value;
-        const status = document.getElementById('task-status').value;
-        const priority = document.getElementById('task-priority').value;
-        const date = document.getElementById('task-date').value;
-        const project = document.getElementById('task-project').value;
-        const alarmTime = document.getElementById('task-alarm-time').value;
-        const alarmSound = document.getElementById('task-alarm-sound').value;
-        const alarm = (alarmTime && alarmSound) ? { time: alarmTime, sound: alarmSound } : null;
-        const taskData = { title, description: desc, status, priority, dueDate: date, project, subtasks: this.tempSubtasks, alarm };
-        let taskId = id;
-        if (id) {
-            const index = this.state.tasks.findIndex(t => t.id === id);
-            this.state.tasks[index] = { ...this.state.tasks[index], ...taskData };
-        } else {
-            taskId = Date.now().toString();
-            this.state.tasks.push({ id: taskId, ...taskData, createdAt: Date.now() });
-            this.addXP(5);
-            this._recordActivity();
-        }
-        this.saveState();
-        try { if (typeof alarmManager !== 'undefined') alarmManager.updateAlarmForTask(taskId, alarm); } catch (e) { }
-        this.closeModal();
-        this.render();
-    }
-
-    render(searchTerm = '') {
-        const filtered = this.getFilteredTasks(searchTerm);
-        const counts = {
-            todo: filtered.filter(t => t.status === 'todo').length,
-            inprogress: filtered.filter(t => t.status === 'in-progress').length,
-            done: filtered.filter(t => t.status === 'done').length
-        };
-        document.getElementById('count-todo').innerText = counts.todo;
-        document.getElementById('count-inprogress').innerText = counts.inprogress;
-        document.getElementById('count-done').innerText = counts.done;
-        document.getElementById('count-total').innerText = filtered.length;
-
-        const boardView = document.getElementById('board-view');
-        const listView = document.getElementById('list-view');
-        const dashView = document.getElementById('dashboard-view');
-        boardView.classList.add('hidden');
-        boardView.classList.remove('flex');
-        listView.classList.add('hidden');
-        if (dashView) dashView.classList.add('hidden');
-
-        if (this.state.view === 'board') {
-            boardView.classList.remove('hidden');
-            boardView.classList.add('flex');
-            document.getElementById('col-todo').innerHTML = this.renderColumn(filtered, 'todo');
-            document.getElementById('col-inprogress').innerHTML = this.renderColumn(filtered, 'in-progress');
-            document.getElementById('col-done').innerHTML = this.renderColumn(filtered, 'done');
-        } else if (this.state.view === 'list') {
-            listView.classList.remove('hidden');
-            document.getElementById('list-container').innerHTML = filtered.length ? filtered.map(t => this.createTaskListHTML(t)).join('') : this.getEmptyStateHTML();
-        } else if (this.state.view === 'dashboard') {
-            if (dashView) dashView.classList.remove('hidden');
-        }
-    }
-
-    renderColumn(tasks, status) {
-        const colTasks = tasks.filter(t => t.status === status);
-        return colTasks.length ? colTasks.map(t => this.createTaskHTML(t)).join('') : this.getEmptyStateHTML();
-    }
-
-    createTaskHTML(task) {
-        const subtasks = task.subtasks || [];
-        const doneSubs = subtasks.filter(s => s.completed).length;
-        const progress = subtasks.length > 0 ? (doneSubs / subtasks.length) * 100 : 0;
-        const priorityColors = {
-            high: 'bg-red-50 text-red-600 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-900/30',
-            medium: 'bg-amber-50 text-amber-600 border-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-900/30',
-            low: 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-white/5 dark:text-slate-400 dark:border-white/5'
-        };
-        const safeDesc = escapeHtml(task.description || '');
-        const parsedDesc = (checkLibrary('marked') && safeDesc) ? marked.parse(safeDesc) : safeDesc;
-        const safeTitle = escapeHtml(task.title);
-        return `
-            <div class="glass-card p-2 sm:p-4 rounded-xl transition-all duration-200 group relative cursor-grab active:cursor-grabbing mb-2 sm:mb-3" data-id="${task.id}" tabindex="0">
-                <div class="flex justify-between items-start mb-1.5 sm:mb-2.5">
-                    <div class="flex gap-1.5 flex-wrap">
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider ${priorityColors[task.priority]}">${task.priority}</span>
-                        <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border border-black/5 dark:border-white/5 truncate max-w-[80px]">
-                            <span class="w-1.5 h-1.5 rounded-full inline-block mr-1 ${this.getProjectColor(task.project || '')}"></span>${escapeHtml(task.project || 'General')}
-                        </span>
-                        ${task.alarm ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-yellow-50 dark:bg-yellow-900/10 text-yellow-700 dark:text-yellow-300 border border-yellow-100 dark:border-yellow-900/20 ml-1 flex items-center gap-1"><i class="fa-solid fa-bell text-xs"></i></span>` : ''}
-                    </div>
-                    <div class="sm:opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/80 dark:bg-black/50 rounded-lg backdrop-blur-sm p-0.5">
-                        <button onclick="app.openModal(null, '${task.id}')" class="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center text-slate-400 hover:text-brand-600 hover:bg-white/50 dark:hover:bg-white/10" aria-label="Edit Task"><i class="fa-solid fa-pen text-[9px] sm:text-[10px]"></i></button>
-                        <button onclick="app.promptDelete('${task.id}')" class="w-5 h-5 sm:w-6 sm:h-6 rounded flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-white/50 dark:hover:bg-white/10" aria-label="Delete Task"><i class="fa-solid fa-trash text-[9px] sm:text-[10px]"></i></button>
-                    </div>
-                </div>
-                <h4 class="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-100 mb-1 leading-snug break-words line-clamp-2">${safeTitle}</h4>
-                ${safeDesc ? `<div class="prose prose-sm dark:prose-invert text-[10px] sm:text-[11px] text-slate-500 line-clamp-2 mb-2 sm:mb-3 max-w-none opacity-80">${parsedDesc}</div>` : ''}
-                ${subtasks.length > 0 ? `
-                <div class="mb-2 sm:mb-3">
-                    <div class="flex justify-between items-end mb-1"><span class="text-[9px] text-slate-400 font-medium">${doneSubs}/${subtasks.length}</span></div>
-                    <div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1"><div class="bg-brand-500 h-1 rounded-full transition-all duration-500" style="width: ${progress}%"></div></div>
-                </div>` : ''}
-                <div class="flex items-center justify-between text-[10px] sm:text-[11px] pt-2 sm:pt-3 border-t border-black/5 dark:border-white/5">
-                    <div class="flex items-center gap-3">
-                        ${task.dueDate ? `<span class="flex items-center gap-1 text-slate-500 ${this.isOverdue(task) ? 'text-red-500 font-bold' : ''}"><i class="fa-regular fa-clock text-[9px] sm:text-[10px]"></i> ${this.formatDate(task.dueDate)}</span>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    createTaskListHTML(task) {
-        const safeTitle = escapeHtml(task.title);
-        return `
-            <div class="glass-card p-3 rounded-lg flex items-center gap-4 group hover:bg-white/80 dark:hover:bg-white/5 transition-colors">
-                <input type="checkbox" ${task.status === 'done' ? 'checked' : ''} onchange="app.updateTaskStatus('${task.id}', this.checked ? 'done' : 'todo')" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 w-4 h-4 cursor-pointer" aria-label="Mark task done">
-                <div class="flex-1 min-w-0">
-                    <h4 class="font-semibold text-slate-800 dark:text-slate-100 text-sm ${task.status === 'done' ? 'line-through text-slate-400' : ''} truncate">${safeTitle}</h4>
-                    <div class="text-[11px] text-slate-500 flex gap-2 items-center mt-0.5">
-                        <span class="font-medium text-brand-600 dark:text-brand-400 flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full ${this.getProjectColor(task.project || '')}"></span> ${escapeHtml(task.project)}
-                        </span>
-                        <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                        <span class="capitalize">${task.priority}</span>
-                        ${task.dueDate ? `<span class="w-1 h-1 rounded-full bg-slate-300"></span> <span class="${this.isOverdue(task) ? 'text-red-500' : ''}">${this.formatDate(task.dueDate)}</span>` : ''}
-                    </div>
-                </div>
-                <div class="flex items-center gap-1 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onclick="app.openModal(null, '${task.id}')" class="p-2 text-slate-400 hover:text-brand-600 hover:bg-white/50 dark:hover:bg-white/10 rounded-lg transition-colors" aria-label="Edit"><i class="fa-solid fa-pen"></i></button>
-                    <button onclick="app.promptDelete('${task.id}')" class="p-2 text-slate-400 hover:text-red-500 hover:bg-white/50 dark:hover:bg-white/10 rounded-lg transition-colors" aria-label="Delete"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-    }
-
     getFilteredTasks(term) {
         let tasks = [...this.state.tasks];
         if (term) tasks = tasks.filter(t => t.title.toLowerCase().includes(term) || (t.description && t.description.toLowerCase().includes(term)));
@@ -575,16 +315,6 @@ class TaskManager {
         else document.documentElement.classList.remove('dark');
     }
 
-    getEmptyStateHTML() {
-        return `
-        <div class="flex flex-col items-center justify-center h-48 text-center opacity-50">
-            <div class="w-12 h-12 bg-white/50 dark:bg-white/5 rounded-full flex items-center justify-center mb-3 backdrop-blur-sm">
-                <i class="fa-solid fa-layer-group text-slate-300 text-lg"></i>
-            </div>
-            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium">No tasks found</p>
-        </div>`;
-    }
-
     formatDate(d) {
         if (!d) return '';
         const date = new Date(d);
@@ -619,10 +349,6 @@ class TaskManager {
         setTimeout(() => { toast.classList.add('opacity-0', 'translate-x-10'); setTimeout(() => toast.remove(), 300); }, 4000);
     }
 
-    triggerConfetti() {
-        if (checkLibrary('confetti')) confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 }, colors: ['#3b82f6', '#10b981', '#f59e0b'], disableForReducedMotion: true, decay: 0.9 });
-    }
-
     toggleMobileMenu() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
 
     closeMobileMenuOutside() {
@@ -631,4 +357,4 @@ class TaskManager {
     }
 }
 
-Object.assign(TaskManager.prototype, DashboardMixin);
+Object.assign(TaskManager.prototype, DashboardMixin, GamificationMixin, ModalMixin, RenderMixin);

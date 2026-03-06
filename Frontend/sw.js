@@ -1,5 +1,5 @@
-const CACHE_NAME = 'taskly-cache-v6';
-const CDN_CACHE = 'taskly-cdn-v5';
+const CACHE_NAME = 'taskly-cache-v7';
+const CDN_CACHE = 'taskly-cdn-v6';
 
 const CORE_ASSETS = [
   './',
@@ -12,6 +12,9 @@ const CORE_ASSETS = [
   './css/dashboard.css',
   './js/utils.js',
   './js/Dashboard.js',
+  './js/Gamification.js',
+  './js/Modal.js',
+  './js/Render.js',
   './js/TaskManager.js',
   './js/AlarmManager.js',
   './js/app.js',

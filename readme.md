@@ -65,13 +65,17 @@ Taskly/
 │   │   └── dashboard.css       # Dashboard widgets & chart styles
 │   ├── js/
 │   │   ├── app.js              # Entry point — initializes TaskManager & AlarmManager
-│   │   ├── TaskManager.js      # Core task CRUD, Kanban rendering, gamification
-│   │   ├── AlarmManager.js     # Alarm scheduling, Web Audio playback, notifications
+│   │   ├── utils.js            # Shared utility functions (escapeHtml, checkLibrary)
+│   │   ├── Gamification.js     # XP, leveling, streak tracking, confetti
+│   │   ├── Modal.js            # Task create/edit modal, subtask management
+│   │   ├── Render.js           # Board/list view rendering, task card HTML
 │   │   ├── Dashboard.js        # Dashboard analytics, charts, heatmap
-│   │   └── utils.js            # Shared utility functions
+│   │   ├── TaskManager.js      # Core class — state, events, projects, filtering
+│   │   └── AlarmManager.js     # Alarm scheduling, Web Audio playback, notifications
 │   └── widget/
-│       ├── widget.css          # Widget-specific styles (glassmorphic, animations)
+│       ├── widget.css          # Widget styles (clean, flat design)
 │       └── widget.js           # Widget logic (clock, stats, progress, quick-add)
+├── vercel.json                 # Vercel deployment config
 ├── readme.md
 └── .gitignore
 ```

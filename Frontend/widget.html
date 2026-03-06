@@ -8,7 +8,7 @@
     <title>Taskly Widget</title>
     <link rel="icon" type="image/svg+xml" href="favicon-v5.svg">
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="widget/widget.css">
 </head>
 <body>
@@ -29,9 +29,9 @@
 
         <div class="stats-grid animate-in" id="stats-grid"></div>
 
-        <div class="progress-section glass-card animate-in" id="progress-section"></div>
+        <div class="progress-section card animate-in" id="progress-section"></div>
 
-        <div class="quick-add-section glass-card animate-in">
+        <div class="quick-add-section card animate-in">
             <form class="quick-add-form" id="quick-add-form" onsubmit="return handleQuickAdd(event)">
                 <input type="text" class="quick-add-input" id="quick-add-input" placeholder="Quick add a task..." autocomplete="off">
                 <button type="submit" class="quick-add-btn" aria-label="Add Task">
@@ -40,10 +40,10 @@
             </form>
         </div>
 
-        <div class="deadlines-section glass-card animate-in" id="deadlines-section">
+        <div class="deadlines-section card animate-in" id="deadlines-section">
             <div class="section-header">
                 <div class="section-title">
-                    <span class="title-icon" style="background: var(--red-soft); color: var(--red);">🔥</span>
+                    <span class="title-icon">↗</span>
                     Upcoming
                 </div>
                 <span class="section-count" id="deadline-count">0</span>
@@ -56,14 +56,14 @@
                 <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1"/></svg>
                 Open App
             </a>
-            <a href="index.html" class="action-btn secondary" id="open-dashboard-btn">
+            <a href="index.html" class="action-btn secondary">
                 <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                 Dashboard
             </a>
         </div>
     </div>
 
-    <div class="widget-toast" id="widget-toast">✓ Task added!</div>
+    <div class="widget-toast" id="widget-toast"></div>
 
     <script src="widget/widget.js"></script>
 </body>
