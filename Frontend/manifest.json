@@ -1,0 +1,106 @@
+{
+  "name": "Taskly - Task Manager",
+  "short_name": "Taskly",
+  "description": "A secure, minimalist task management app with Kanban board, gamification, alarms, and offline PWA support.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "orientation": "any",
+  "background_color": "#050505",
+  "theme_color": "#0ea5e9",
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "favicon-v5.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon-v5.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Task",
+      "short_name": "New",
+      "description": "Create a new task quickly",
+      "url": "./index.html?action=new",
+      "icons": [
+        {
+          "src": "favicon-v5.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your task dashboard",
+      "url": "./index.html?view=dashboard",
+      "icons": [
+        {
+          "src": "favicon-v5.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Quick Widget",
+      "short_name": "Widget",
+      "description": "View task summary widget",
+      "url": "./widget.html",
+      "icons": [
+        {
+          "src": "favicon-v5.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "name": "Taskly Summary",
+      "short_name": "Tasks",
+      "description": "Quick glance at your tasks, deadlines, and progress",
+      "tag": "taskly-widget",
+      "ms_ac_template": "widget.html",
+      "data": "./widget.html",
+      "type": "text/html",
+      "screenshots": [],
+      "icons": [
+        {
+          "src": "favicon-v5.svg",
+          "sizes": "any",
+          "type": "image/svg+xml"
+        }
+      ],
+      "backgrounds": [
+        {
+          "src": "favicon-v5.svg"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
+}

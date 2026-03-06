@@ -1,0 +1,197 @@
+@keyframes widgetFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.widget-card {
+    animation: widgetFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.widget-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.dark .widget-card:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.widget-card:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.widget-card:nth-child(2) {
+    animation-delay: 0.06s;
+}
+
+.widget-card:nth-child(3) {
+    animation-delay: 0.12s;
+}
+
+.widget-card:nth-child(4) {
+    animation-delay: 0.18s;
+}
+
+.widget-card:nth-child(5) {
+    animation-delay: 0.24s;
+}
+
+.widget-card:nth-child(6) {
+    animation-delay: 0.30s;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.25s ease;
+    will-change: transform;
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.dark .stat-card {
+    background: linear-gradient(135deg, rgba(30, 30, 30, 0.6), rgba(20, 20, 20, 0.3));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.stat-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.stat-card .stat-glow {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    opacity: 0.15;
+    filter: blur(20px);
+}
+
+@keyframes ringDraw {
+    from {
+        stroke-dashoffset: 283;
+    }
+}
+
+.ring-progress {
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes barFill {
+    from {
+        width: 0;
+    }
+}
+
+.bar-fill {
+    animation: barFill 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.heatmap-cell {
+    border-radius: 3px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+    cursor: default;
+}
+
+.heatmap-cell:hover {
+    transform: scale(1.6);
+    z-index: 10;
+    position: relative;
+    outline: 2px solid rgba(16, 185, 129, 0.4);
+    outline-offset: 1px;
+}
+
+.heatmap-cell[title] {
+    position: relative;
+}
+
+.deadline-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.deadline-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+    transform: translateX(4px);
+}
+
+.dark .deadline-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-value {
+    animation: countUp 0.6s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .widget-card {
+        animation: none;
+        opacity: 1;
+    }
+}
+
+#dashboard-view,
+#list-view {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+}
+
+@media (max-width: 640px) {
+    #widgets-grid {
+        gap: 12px;
+    }
+
+    .widget-card {
+        padding: 14px !important;
+    }
+
+    .stat-card {
+        padding: 12px;
+    }
+}
