@@ -1,5 +1,5 @@
-const CACHE_NAME = 'taskly-cache-v7';
-const CDN_CACHE = 'taskly-cdn-v6';
+const CACHE_NAME = 'taskly-cache-v8';
+const CDN_CACHE = 'taskly-cdn-v7';
 
 const CORE_ASSETS = [
   './',
@@ -7,6 +7,8 @@ const CORE_ASSETS = [
   './widget.html',
   './manifest.json',
   './favicon-v5.svg',
+  './icon-192.png',
+  './icon-512.png',
   './css/base.css',
   './css/components.css',
   './css/dashboard.css',
